@@ -55,7 +55,7 @@ class gradient_descent:
         return np.mean(Y_prediction==Y)
         
 
-    def training(self, X, Y, x_test, y_test, steps, learning_rate=0.0075):
+    def training(self, X, Y, x_test, y_test, steps, learning_rate=0.009):
         # Initialize parameters
         self.initialize_parameters(X)
         costs=[]

@@ -7,7 +7,7 @@ import numpy as np
 x_train, y_train, x_test, y_test, x_test_orig = load_data()
 
 model = gradient_descent()
-parameters, costs, train_accs, test_accs = model.training(x_train, y_train, x_test, y_test, 3000)
+parameters, costs, train_accs, test_accs = model.training(x_train, y_train, x_test, y_test, 2000)
 
 #Prediction
 y_hat=model.prediction(x_test) #, x_test_orig, 1000
