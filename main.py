@@ -1,29 +1,26 @@
-from display import display_image
+from display import display_image, display_metrics
 from image_preprocess import load_data
+from gradient_descent import gradient_descent
 
 import numpy as np
 
-x_train, y_train, x_test, y_test = load_data()
+x_train, y_train, x_test, y_test, x_test_orig = load_data()
 
-# Initialize parameters
-n_x=x_train.shape[0]
-m=x_train.shape[1]
-W=np.zeros((n_x, m))
-b=np.zeros((1, m))
+model = gradient_descent()
+parameters, costs, train_accs, test_accs = model.training(x_train, y_train, x_test, y_test, 3000)
 
-# Define the sigmoid function
-def sigmoid(z):
-    return 1/(1+np.exp(-z))
+#Prediction
+y_hat=model.prediction(x_test) #, x_test_orig, 1000
 
-# Define the forward propagation
-print(W.shape, x_train.shape, b.shape)
-z=np.dot(W.T,x_train)+b
-a=sigmoid(z)
-print(a)
+#Display test accuracy
+print(f"The test accuracy is {np.round(model.compute_accuracy(x_test, y_test)*100)}%")
 
-
-# If we want to print some images from the dataset
+#If we want to display an image
 print_image = False
 if print_image:
     index = 0
-    display_image(index, x_train, y_train)
+    display_image(x_train[index], y_train[index])
+    
+print_cost = True
+if print_cost:
+    display_metrics(costs, train_accs, test_accs)
