@@ -1,10 +1,9 @@
 import numpy as np
 from display import display_image
+from activation_functions import *
+from cost_functions import *
 
-def sigmoid(z):
-    return 1/(1+np.exp(-z))
-
-class logistic_regression:
+class binary_classification:
     def initialize_parameters(self, X):
         n_x=X.shape[0]
         self.parameters=np.zeros((n_x+1, 1)) #np.random.randn(n_x+1, 1)*0.01
@@ -16,16 +15,11 @@ class logistic_regression:
         A=sigmoid(Z)
         return A
 
-    def compute_cost(self, A, Y):
-        m=Y.shape[0]
-        cost=(-1/m)*np.sum(np.dot(Y,np.log(A).T)+np.dot((1-Y),np.log(1-A).T))
-        return cost
-
     def back_propagation(self, A, X, Y, learning_rate):
-        m=X.shape[0]
-        dZ=A-Y
+        m=X.shape[1]
         
-        dW=np.dot(X,dZ.T)/m
+        dZ=A-Y
+        dW=np.dot(dZ,X.T)/m
         db=np.sum(dZ)/m
         
         W=self.parameters[:-1,:]
@@ -57,7 +51,7 @@ class logistic_regression:
         for i in range(0,steps-1):
             # Define the forward propagation
             A=self.forward_propagation(X)
-            cost = self.compute_cost(A,Y)
+            cost = sigmoid_cost(A,Y)
             train_acc=self.compute_accuracy(X, Y)
             test_acc=self.compute_accuracy(x_test,y_test)
             #Start back propagation
@@ -71,9 +65,88 @@ class logistic_regression:
         self.save_weights(train_acc)
         return self.parameters, costs, train_accs, test_accs
     def save_weights(self, train_acc):
-        path = f'saved_models/log_reg_train_acc_{train_acc}.npy'
+        path = f'saved_models/bin_cla_train_acc_{train_acc}.npy'
         np.save(path, self.parameters)
         return path
     def load_weights(self, path_name):
         self.parameters=np.load(f'saved_models/{path_name}')
         return self.parameters
+    
+class multi_classification:
+    def initialize_parameters(self,X,Y):
+        n_0=X.shape[0]
+        n_1=int(n_0/2)
+        n_2=Y.shape[0]
+        W1=np.random.randn(n_1,n_0)*0.01
+        b1=np.zeros((n_1,1))
+        W2=np.random.randn(n_2,n_1)*0.01
+        b2=np.zeros((n_2,1))
+        self.parameters={
+            "W1":W1,
+            "b1":b1,
+            "W2":W2,
+            "b2":b2
+        }
+        return self.parameters
+    def propagate(self, X):
+        W1=self.parameters["W1"]
+        b1=self.parameters["b1"]
+        W2=self.parameters["W2"]
+        b2=self.parameters["b2"]
+        Z1=np.dot(W1,X)+b1
+        A1=tanh(Z1)
+        Z2=np.dot(W2,A1)+b2
+        A2=softmax(Z2)
+        self.cache={
+            "Z1":Z1,
+            "A1":A1,
+            "Z2":Z2,
+            "A2":A2
+        }
+        return A2
+    def backprop(self, X, Y, learning_rate):
+        m=X.shape[1]
+        
+        W2=self.parameters["W2"]
+        Z1=self.cache["Z1"]
+        A1=self.cache["A1"]
+        A2=self.cache["A2"]
+        
+        dZ2=A2-Y
+        dW2=np.dot(dZ2,A1.T)/m
+        db2=np.sum(dZ2,axis=1,keepdims=True)/m
+        dZ1=np.dot(W2.T,dZ2)*(dtanh(Z1))
+        dW1=np.dot(dZ1,X.T)/m
+        db1=np.sum(dZ1, axis=1, keepdims=True)/m
+        
+        self.parameters["W1"] -= dW1*learning_rate
+        self.parameters["b1"] -= db1*learning_rate
+        self.parameters["W2"] -= dW2*learning_rate
+        self.parameters["b2"] -= db2*learning_rate
+    def prediction(self, X):
+        Y_prediction = self.propagate(X)
+        return Y_prediction
+    def compute_accuracy(self, X, Y):
+        A2=self.prediction(X)
+        num_examples = A2.shape[1]
+        max_indices = np.argmax(A2, axis=0)
+        Y_prediction = np.zeros_like(A2)
+        Y_prediction[max_indices, np.arange(num_examples)] = 1
+        return np.mean(np.all(Y_prediction == Y, axis=0))
+    def training(self, X, Y, X_test, Y_test, steps, learning_rate=0.009):
+        self.initialize_parameters(X, Y)
+        costs = list()
+        train_accs=list()
+        test_accs=list()
+        for i in range(steps):
+            A2 = self.propagate(X)
+            cost = softmax_cost(A2,Y)
+            self.backprop(X,Y,learning_rate)
+            train_acc=self.compute_accuracy(X,Y)
+            test_acc=self.compute_accuracy(X_test, Y_test)
+            if i%10==0:
+                print(f"Iteration {i}: cost:{cost}; train_acc:{train_acc}; test_acc:{test_acc}") #np.round(train_acc*100)
+            costs.append(cost)
+            train_accs.append(train_acc)
+            test_accs.append(test_acc)
+        return self.parameters, costs, train_accs, test_accs

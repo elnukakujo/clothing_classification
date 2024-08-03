@@ -2,14 +2,26 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 def display_image(x,y):
+    labels= [
+        "T-shirt/top",
+        "Trouser",
+        "Pullover",
+        "Dress",
+        "Coat",
+        "Sandal",
+        "Shirt",
+        "Sneaker",
+        "Bag",
+        "Ankle boot"
+    ]
     fig = px.imshow(x, color_continuous_scale='gray')
     fig.update_layout(
-        title='This is a {}'.format('T-shirt' if y == 0 else 'Trouser'),
+        title=f'This is a {labels[y]}',
         xaxis=dict(showticklabels=False),
         yaxis=dict(showticklabels=False),
     )
     fig.show()
-    
+
 def display_metrics(costs= False, train_accs= False, test_accs= False):
     fig=go.Figure()
     if costs: 
