@@ -9,5 +9,5 @@ For this application, we use only the class tshirt and trouser.
 
 ## Result
 
-As displayed by this line chart, the data is too complex for a simple logistic regression gradient descent. The highest train accuracy is 60%, and the lowest cost is 0.660.
-![image](https://github.com/user-attachments/assets/7c1d2dcd-9ed1-4e54-9f2c-8aabb6e40e21)
+With logistic regression, the highest test accuracy is 98%, and the lowest cost is 0.075.
+![image](https://github.com/user-attachments/assets/b15b9eb0-0743-44fc-ba94-4b58f802edc0)
