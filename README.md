@@ -5,7 +5,7 @@ The dataset is from the fashion MNIST dataset containing 10 classes along more t
 
 https://github.com/zalandoresearch/fashion-mnist
 
-For this application, we use only the class tshirt and trouser.
+For the bnary classification, we use only the class tshirt 0 and trouser 1 with each 6000 training images and 1000 testing images.
 
 ## Result
 
