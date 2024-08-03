@@ -14,5 +14,5 @@ With logistic regression, the highest test accuracy is 98%, and the lowest cost 
 ![image](https://github.com/user-attachments/assets/b15b9eb0-0743-44fc-ba94-4b58f802edc0)
 
 ### Multi-class classification
-For now, using a 2 layer model with tanh and softmax activation function, and cross entropy, highest train_acc=0.61885, lowest cost:1.79
-![image](https://github.com/user-attachments/assets/20bacf50-150f-44f6-b12d-cdbde20129d9)
+For now, using a 2 layer model with tanh and softmax activation function, and cross entropy, highest train_acc=0.6551833, lowest cost:1.086
+![image](https://github.com/user-attachments/assets/1b927a67-8e9e-41e0-8147-dd50706f2441)
