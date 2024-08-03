@@ -1,4 +1,4 @@
-from tensorflow.keras.datasets import fashion_mnist
+from tensorflow.keras.datasets import fashion_mnist # type: ignore
 import numpy as np
 
 def reduce_and_flatten(x):
