@@ -10,28 +10,31 @@ def display_image(x,y):
     )
     fig.show()
     
-def display_metrics(costs, train_accs, test_accs):
+def display_metrics(costs= False, train_accs= False, test_accs= False):
     fig=go.Figure()
-    fig.add_trace(go.Scatter(
-        x=list(range(len(costs))),
-        y=costs,
-        mode='lines',
-        name='Cost'
-    ))
+    if costs: 
+        fig.add_trace(go.Scatter(
+            x=list(range(len(costs))),
+            y=costs,
+            mode='lines',
+            name='Cost'
+        ))
 
-    fig.add_trace(go.Scatter(
-        x=list(range(len(train_accs))),
-        y=train_accs,
-        mode='lines',
-        name='Train Accuracy'
-    ))
+    if train_accs:
+        fig.add_trace(go.Scatter(
+            x=list(range(len(train_accs))),
+            y=train_accs,
+            mode='lines',
+            name='Train Accuracy'
+        ))
     
-    fig.add_trace(go.Scatter(
-        x=list(range(len(test_accs))),
-        y=test_accs,
-        mode='lines',
-        name='Test Accuracy'
-    ))
+    if test_accs:
+        fig.add_trace(go.Scatter(
+            x=list(range(len(test_accs))),
+            y=test_accs,
+            mode='lines',
+            name='Test Accuracy'
+        ))
 
     fig.update_layout(
         title="Evolution of Cost, and Training/Test Accuracy over the Training Steps",

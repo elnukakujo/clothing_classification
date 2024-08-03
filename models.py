@@ -4,20 +4,14 @@ from display import display_image
 def sigmoid(z):
     return 1/(1+np.exp(-z))
 
-class gradient_descent:
-    parameters=dict()
+class logistic_regression:
     def initialize_parameters(self, X):
         n_x=X.shape[0]
-        W=np.zeros((n_x, 1)) #np.random.randn(n_x, 1)*0.01
-        b=0.0
-        self.parameters = {
-            "W":W,
-            "b":b
-        }
+        self.parameters=np.zeros((n_x+1, 1)) #np.random.randn(n_x+1, 1)*0.01
 
     def forward_propagation(self,X):
-        W=self.parameters["W"]
-        b=self.parameters["b"]
+        W=self.parameters[:-1,:]
+        b=self.parameters[-1,:]
         Z=np.dot(W.T,X)+b
         A=sigmoid(Z)
         return A
@@ -30,19 +24,17 @@ class gradient_descent:
     def back_propagation(self, A, X, Y, learning_rate):
         m=X.shape[0]
         dZ=A-Y
+        
         dW=np.dot(X,dZ.T)/m
         db=np.sum(dZ)/m
         
-        W=self.parameters["W"]
-        b=self.parameters["b"]
+        W=self.parameters[:-1,:]
+        b=self.parameters[-1,:]
         
         W-=dW*learning_rate
         b-=db*learning_rate
         
-        self.parameters = {
-            "W":W,
-            "b":b
-        }
+        self.parameters = np.vstack([W, b])
 
     def prediction(self, X, X_orig=[], index=0):
         Y_prediction = np.round(self.forward_propagation(X)).astype(int)
@@ -55,7 +47,7 @@ class gradient_descent:
         return np.mean(Y_prediction==Y)
         
 
-    def training(self, X, Y, x_test, y_test, steps, learning_rate=0.009):
+    def training(self, X, Y, x_test, y_test, steps, learning_rate):
         # Initialize parameters
         self.initialize_parameters(X)
         costs=[]
@@ -76,4 +68,12 @@ class gradient_descent:
             costs.append(cost)
             train_accs.append(train_acc)
             test_accs.append(test_acc)
+        self.save_weights(train_acc)
         return self.parameters, costs, train_accs, test_accs
+    def save_weights(self, train_acc):
+        path = f'saved_models/log_reg_train_acc_{train_acc}.npy'
+        np.save(path, self.parameters)
+        return path
+    def load_weights(self, path_name):
+        self.parameters=np.load(f'saved_models/{path_name}')
+        return self.parameters
