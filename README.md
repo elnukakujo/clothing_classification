@@ -1,11 +1,12 @@
-# clothing_binary_classification
-A 1-2day binary classification challenge using Logistic Regression and Gradient Descent only with NumPy
+# clothing_classification
+A 3days classification challenge using Logistic Regression and Gradient Descent only with NumPy
 
 The dataset is from the fashion MNIST dataset containing 10 classes along more than 60000 images:
 
 https://github.com/zalandoresearch/fashion-mnist
 
-For the bnary classification, we use only the class tshirt 0 and trouser 1 with each 6000 training images and 1000 testing images.
+For the binary classification, we use only the class tshirt 0 and trouser 1 with each 6000 training images and 1000 testing images.
+For the multi class classification, we use all the 10 classes.
 
 ## Result
 
