@@ -1,11 +1,12 @@
-# clothing_binary_classification
-A 1-2day binary classification challenge using Logistic Regression and Gradient Descent only with NumPy
+# clothing_classification
+A 3days classification challenge using Logistic Regression and Gradient Descent only with NumPy
 
 The dataset is from the fashion MNIST dataset containing 10 classes along more than 60000 images:
 
 https://github.com/zalandoresearch/fashion-mnist
 
-For the bnary classification, we use only the class tshirt 0 and trouser 1 with each 6000 training images and 1000 testing images.
+For the binary classification, we use only the class tshirt 0 and trouser 1 with each 6000 training images and 1000 testing images.
+For the multi class classification, we use all the 10 classes.
 
 ## Result
 
@@ -14,9 +15,6 @@ With logistic regression, the highest test accuracy is 98%, and the lowest cost 
 ![image](https://github.com/user-attachments/assets/b15b9eb0-0743-44fc-ba94-4b58f802edc0)
 
 ### Multi-class classification
-For now, using a 2 layer model with tanh and softmax activation function, and cross entropy, highest train_acc=0.6551833, lowest cost:1.086
-![image](https://github.com/user-attachments/assets/1b927a67-8e9e-41e0-8147-dd50706f2441)
-
-Update:
-Changed the steps to 4000 with a learning rate of 0.009 and 60 nodes in the hidden layer. Highest train_acc=0.7939; lowest cost=0.5923
-![image](https://github.com/user-attachments/assets/1c5a59c1-fbeb-4f71-bbb8-7ac345376975)
+For now, using a 2 layer model with relu and softmax activation function, and cross entropy, highest test_acc=0.8134, lowest cost:0.5130
+![step_6000_train_acc_0 8257333333333333_cost_0 5130132978716956](https://github.com/user-attachments/assets/0f2418bf-ee52-4879-a881-cf146eab43a9)
+PS: I tried removing the sort of speed bump on the accuracies at the start of the training by lowering the learning rate, adding another hidden layer, changing the hidden nodes, but it would generally lower the metrics performances considerably, by, it seemed, a lower point of convergence, as well as increasing a lot the training time.
