@@ -74,21 +74,11 @@ class binary_classification:
         return self.parameters
     
 class multi_classification:
-    def initialize_parameters(self,X,Y):
-        n_0=X.shape[0]
-        n_1=70
-        n_2=Y.shape[0]
-        W1=np.random.randn(n_1,n_0)*0.01
-        b1=np.zeros((n_1,1))
-        W2=np.random.randn(n_2,n_1)*0.01
-        b2=np.zeros((n_2,1))
-
-        self.parameters={
-            "W1":W1,
-            "b1":b1,
-            "W2":W2,
-            "b2":b2
-        }
+    def initialize_parameters(self,layers_dims):
+        self.parameters=dict()
+        for l in range(1, len(layers_dims)):
+            self.parameters["W"+str(l)]=np.random.randn(layers_dims[l],layers_dims[l-1])*np.sqrt(2/layers_dims[l-1])
+            self.parameters["b"+str(l)]=np.random.randn((layers_dims[l],1))
         return self.parameters
     def propagate(self, X):
         W1=self.parameters["W1"]
@@ -153,7 +143,7 @@ class multi_classification:
         return self.parameters
         
     def training(self, X, Y, X_test, Y_test, steps, learning_rate=0.009):
-        self.initialize_parameters(X, Y)
+        self.initialize_parameters(layers_dims=[X.shape[0],70,Y.shape[0]])
         costs = list()
         train_accs=list()
         test_accs=list()
