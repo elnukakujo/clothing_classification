@@ -31,9 +31,9 @@ def multi_class(path=False,print_image=False, print_metric=False):
     
     model=multi_classification()
     if not path:
-        parameters, costs, train_accs, test_accs = model.training(x_train,y_train, x_test, y_test, steps=6000, learning_rate=0.009)
+        parameters, costs, train_accs, test_accs = model.training(x_train,y_train, x_test, y_test, steps=2000, learning_rate=0.009)
     else:
-        parameters=model.load_weights(path)
+        parameters, costs, train_accs, test_accs = model.load_weights(path)
     print(f"The test accuracy is {np.round(model.compute_accuracy(x_test, y_test)*100)}%")
     
     if print_image:

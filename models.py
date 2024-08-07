@@ -76,36 +76,49 @@ class binary_classification:
 class multi_classification:
     def initialize_parameters(self,layers_dims):
         self.parameters=dict()
+        np.random.seed(0)
         for l in range(1, len(layers_dims)):
             self.parameters["W"+str(l)]=np.random.randn(layers_dims[l],layers_dims[l-1])*np.sqrt(2/layers_dims[l-1])
-            self.parameters["b"+str(l)]=np.random.randn((layers_dims[l],1))
+            self.parameters["b"+str(l)]=np.zeros((layers_dims[l],1))
         return self.parameters
     def propagate(self, X):
         W1=self.parameters["W1"]
         b1=self.parameters["b1"]
         W2=self.parameters["W2"]
         b2=self.parameters["b2"]
+        W3=self.parameters["W3"]
+        b3=self.parameters["b3"]
 
         Z1=np.dot(W1,X)+b1
         A1=relu(Z1)
         Z2=np.dot(W2,A1)+b2
-        A2=softmax(Z2)
+        A2=relu(Z2)
+        Z3=np.dot(W3,A2)+b3
+        A3=softmax(Z3)
 
         self.cache={
             "Z1":Z1,
             "A1":A1,
-            "A2":A2
+            "Z2":Z2,
+            "A2":A2,
+            "A3":A3
         }
-        return A2
+        return A3
     def backprop(self, X, Y, learning_rate):
         m=X.shape[1]
         
         W2=self.parameters["W2"]
+        W3=self.parameters["W3"]
         Z1=self.cache["Z1"]
         A1=self.cache["A1"]
+        Z2=self.cache["Z2"]
         A2=self.cache["A2"]
+        A3=self.cache["A3"]
         
-        dZ2=A2-Y
+        dZ3=A3-Y
+        dW3=np.dot(dZ3,A2.T)/m
+        db3=np.sum(dZ3,axis=1,keepdims=True)/m
+        dZ2=np.dot(W3.T,dZ3)*(drelu(Z2))
         dW2=np.dot(dZ2,A1.T)/m
         db2=np.sum(dZ2,axis=1,keepdims=True)/m
         dZ1=np.dot(W2.T,dZ2)*(drelu(Z1))
@@ -116,6 +129,8 @@ class multi_classification:
         self.parameters["b1"] -= db1*learning_rate
         self.parameters["W2"] -= dW2*learning_rate
         self.parameters["b2"] -= db2*learning_rate
+        self.parameters["W3"] -= dW3*learning_rate
+        self.parameters["b3"] -= db3*learning_rate
         
     def prediction(self, X):
         Y_prediction = self.propagate(X)
@@ -129,21 +144,34 @@ class multi_classification:
         Y_prediction[max_indices, np.arange(num_examples)] = 1
         return np.mean(np.all(Y_prediction == Y, axis=0))
     
-    def save_weights(self, step, train_acc, cost):
-        path=f'saved_models/multi_class/step_{step}_train_acc_{train_acc}_cost_{cost}.json'
+    def save_weights(self, step, train_accs, costs, test_accs):
+        path_weights=f'saved_models/multi_class/step_{step}_train_acc_{train_accs[-1]}_cost_{costs[-1]}.json'
         parameters = {k: v.tolist() for k, v in self.parameters.items()}
-        with open(path,'w') as json_file:
+        with open(path_weights,'w') as json_file:
             json.dump(parameters, json_file, indent=4)
-        return path
+            
+        path_metrics=f'saved_models/multi_class/metrics/step_{step}_train_acc_{train_accs[-1]}_cost_{costs[-1]}_metrics.json'
+        metrics={
+            'costs':costs,
+            'train_accs':train_accs,
+            'test_accs':test_accs
+        }
+        with open(path_metrics,'w') as json_file:
+            json.dump(metrics, json_file, indent=4)
+            
+        return path_weights
     
     def load_weights(self, path):
         with open(f'saved_models/multi_class/{path}.json','r') as json_file:
             parameters=json.load(json_file)
         self.parameters={k: np.array(v) for k, v in parameters.items()}
-        return self.parameters
+        
+        with open(f'saved_models/multi_class/metrics/{path}_metrics.json','r') as json_file:
+            metrics=json.load(json_file)
+        return self.parameters, metrics["costs"], metrics["train_accs"], metrics["test_accs"]
         
     def training(self, X, Y, X_test, Y_test, steps, learning_rate=0.009):
-        self.initialize_parameters(layers_dims=[X.shape[0],70,Y.shape[0]])
+        self.initialize_parameters(layers_dims=[X.shape[0], 60, 30,Y.shape[0]])
         costs = list()
         train_accs=list()
         test_accs=list()
@@ -161,6 +189,6 @@ class multi_classification:
                 test_accs.append(test_acc)
         except KeyboardInterrupt:
             print("KeyboardInterrupt")
-        path = self.save_weights(i,train_acc,cost)
+        path = self.save_weights(i,train_accs,costs,test_accs)
         print("Parameters saved at : ",path)
         return self.parameters, costs, train_accs, test_accs
