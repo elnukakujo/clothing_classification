@@ -171,7 +171,7 @@ class multi_classification:
         return self.parameters, metrics["costs"], metrics["train_accs"], metrics["test_accs"]
         
     def training(self, X, Y, X_test, Y_test, steps, learning_rate=0.009):
-        self.initialize_parameters(layers_dims=[X.shape[0], 60, 30,Y.shape[0]])
+        self.initialize_parameters(layers_dims=[X.shape[0], 80, 40,Y.shape[0]])
         costs = list()
         train_accs=list()
         test_accs=list()
