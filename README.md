@@ -18,3 +18,7 @@ With logistic regression, the highest test accuracy is 98%, and the lowest cost 
 For now, using a 2 layer model with relu and softmax activation function, and cross entropy, highest test_acc=0.8134, lowest cost:0.5130
 ![step_6000_train_acc_0 8257333333333333_cost_0 5130132978716956](https://github.com/user-attachments/assets/0f2418bf-ee52-4879-a881-cf146eab43a9)
 PS: I tried removing the sort of speed bump on the accuracies at the start of the training by lowering the learning rate, adding another hidden layer, changing the hidden nodes, but it would generally lower the metrics performances considerably, by, it seemed, a lower point of convergence, as well as increasing a lot the training time.
+
+#### Using He hyper parameter for random weight initialization
+With only 2000 steps, I get a better result as previously.
+![image](https://raw.githubusercontent.com/elnukakujo/clothing_classification/main/plot/multi_class/step_2000_train_acc_0.8317_cost_0.4962773316467636.png)
