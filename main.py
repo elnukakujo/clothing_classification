@@ -31,7 +31,8 @@ def multi_class(path=False,print_image=False, print_metric=False):
     
     model=multi_classification()
     if not path:
-        parameters, costs, train_accs, dev_accs = model.training(x_train,y_train, x_dev, y_dev, epochs=10, learning_rate=0.008, batch_size=128)
+        parameters, costs, train_accs, dev_accs = model.training(x_train,y_train, x_dev, y_dev, epochs=10, 
+                                                                 learning_rate=0.008, batch_size=128,optimizer="adam")
     else:
         parameters, costs, train_accs, dev_accs = model.load_weights(path)
     print(f"The dev accuracy is {np.round(model.compute_accuracy(x_dev, y_dev)*100)}%")
@@ -45,4 +46,4 @@ def multi_class(path=False,print_image=False, print_metric=False):
     except UnboundLocalError or NameError:
         print("Costs, train accuracies and/or dev accuracies not defined")
         
-multi_class(path="epoch_10_train_acc_0.90215_cost_1.2711365475223266",print_metric=True)#path="epoch_10_train_acc_0.90215_cost_1.2711365475223266",
+multi_class(print_metric=True)#path="epoch_10_train_acc_0.90215_cost_1.2711365475223266",

@@ -147,14 +147,19 @@ class multi_classification:
         Y_prediction[max_indices, np.arange(num_examples)] = 1
         return np.mean(np.all(Y_prediction == Y, axis=0))
     
-    def save_weights(self, epoch, train_accs, costs, dev_accs):
-        path_weights=f'saved_models/multi_class/epoch_{epoch}_train_acc_{train_accs[-1]}_cost_{costs[-1]}.json'
+    def save_weights(self, epoch, train_accs, costs, dev_accs, optimizer, learning_rate):
+        if not optimizer:
+            optimizer="none"
+        path_weights=f'saved_models/multi_class/epoch_{epoch}_optimizer_{optimizer}.json'
         parameters = {k: v.tolist() for k, v in self.parameters.items()}
         with open(path_weights,'w') as json_file:
             json.dump(parameters, json_file, indent=4)
             
-        path_metrics=f'saved_models/multi_class/metrics/epoch_{epoch}_train_acc_{train_accs[-1]}_cost_{costs[-1]}_metrics.json'
+        path_metrics=f'saved_models/multi_class/metrics/epoch_{epoch}_optimizer_{optimizer}_metrics.json'
         metrics={
+            'optimizer':optimizer,
+            'epoch':epoch,
+            'learning_rate':learning_rate,
             'costs':costs,
             'train_accs':train_accs,
             'dev_accs':dev_accs
@@ -228,11 +233,17 @@ class multi_classification:
             self.parameters["b"+str(layer)]-=learning_rate*v_corrected["db" + str(layer)]/(np.sqrt(s_corrected["db" + str(layer)])+epsilon)
         return v, s
     
-    def training(self, X, Y, X_test, Y_test, epochs, learning_rate=0.009, batch_size=128, adam=True):
+    def update_parameters(self, grads, learning_rate):
+        L = len(self.parameters)//2
+        for layer in range(1,L+1):
+            self.parameters["W"+str(layer)]-=learning_rate*grads["dW" + str(layer)]
+            self.parameters["b"+str(layer)]-=learning_rate*grads["db" + str(layer)]
+    
+    def training(self, X, Y, X_test, Y_test, epochs, learning_rate=0.009, batch_size=128, optimizer=False):
         np.random.seed(0)
         m=X.shape[1]
         self.initialize_parameters(layers_dims=[X.shape[0], 80, 40,Y.shape[0]])
-        if adam:
+        if optimizer=="adam":
             v, s = self.initialize_adam()
         costs = list()
         train_accs=list()
@@ -248,8 +259,10 @@ class multi_classification:
                     A_L, cache = self.propagate(Xt)
                     cost_total += softmax_cost(A_L,Yt)
                     grads = self.backprop(Xt,Yt,cache)
-                    if adam:
+                    if optimizer=="adam":
                         v,s=self.update_parameters_adam(grads,v,s,t,learning_rate,beta1=0.9,beta2=0.999,epsilon=1e-8)
+                    elif not optimizer:
+                        self.update_parameters(grads,learning_rate)
                 cost_avg =cost_total/len(mini_batches)+1
                 train_acc = self.compute_accuracy(X,Y)
                 dev_acc=self.compute_accuracy(X_test, Y_test)
@@ -259,6 +272,6 @@ class multi_classification:
                 dev_accs.append(dev_acc)
         except KeyboardInterrupt:
             print("KeyboardInterrupt")
-        path = self.save_weights(epoch,train_accs,costs,dev_accs)
+        path = self.save_weights(epoch,train_accs,costs,dev_accs, optimizer, learning_rate)
         print("Parameters saved at : ",path)
         return self.parameters, costs, train_accs, dev_accs
