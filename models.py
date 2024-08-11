@@ -248,6 +248,12 @@ class multi_classification:
         costs = list()
         train_accs=list()
         dev_accs=list()
+        
+        # Compute epoch "0" metrics
+        A_L, cache = self.propagate(X)
+        costs.append(softmax_cost(A_L,Y))
+        train_accs.append(self.compute_accuracy(X,Y))
+        dev_accs.append(self.compute_accuracy(X_test,Y_test))
         try:
             for epoch in range(1,epochs+1):
                 mini_batches = self.random_mini_batches(X, Y, batch_size)
@@ -263,7 +269,7 @@ class multi_classification:
                         v,s=self.update_parameters_adam(grads,v,s,t,learning_rate,beta1=0.9,beta2=0.999,epsilon=1e-8)
                     elif not optimizer:
                         self.update_parameters(grads,learning_rate)
-                cost_avg =cost_total/len(mini_batches)+1
+                cost_avg =cost_total/len(mini_batches)
                 train_acc = self.compute_accuracy(X,Y)
                 dev_acc=self.compute_accuracy(X_test, Y_test)
                 print(f"Epoch {epoch}: cost:{cost_avg}; train_acc:{train_acc}; dev_acc:{dev_acc}") #np.round(train_acc*100)

@@ -51,11 +51,11 @@ def display_metrics(costs= False, train_accs= False, test_accs= False):
     fig.update_layout(
         title="Evolution of Cost, and Training/Test Accuracy over the Training Steps",
         xaxis=dict(
-            title="Training Step"
+            title="Epochs"
         ),
         yaxis=dict(
             title="Value",
-            range=[0,2]
+            range=[0,1.5]
         ),
         legend_title="Metrics"
     )

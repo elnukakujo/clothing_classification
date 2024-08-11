@@ -32,7 +32,7 @@ def multi_class(path=False,print_image=False, print_metric=False):
     model=multi_classification()
     if not path:
         parameters, costs, train_accs, dev_accs = model.training(x_train,y_train, x_dev, y_dev, epochs=10, 
-                                                                 learning_rate=0.008, batch_size=128,optimizer="adam")
+                                                                 learning_rate=0.008, batch_size=128,optimizer=False)
     else:
         parameters, costs, train_accs, dev_accs = model.load_weights(path)
     print(f"The dev accuracy is {np.round(model.compute_accuracy(x_dev, y_dev)*100)}%")
