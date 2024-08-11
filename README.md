@@ -22,3 +22,12 @@ PS: I tried removing the sort of speed bump on the accuracies at the start of th
 #### Using He hyper parameter for random weight initialization
 With only 2000 steps, I get a better result as previously.
 ![image](https://raw.githubusercontent.com/elnukakujo/clothing_classification/main/plot/multi_class/step_2000_train_acc_0.8317_cost_0.4962773316467636.png)
+
+#### Comparison with Adam optimization vs classic mini-batch gradient descent
+- With Adam optimizer, learning rate 0,008 and batch size 128
+![image](https://raw.githubusercontent.com/elnukakujo/clothing_classification/main/plot/multi_class/epoch_10_optimizer_adam.png)
+train_acc: 0.90, dev_acc: 0.87, cost:0.27
+
+- Without optimizer, same hyperparameters
+![image](https://raw.githubusercontent.com/elnukakujo/clothing_classification/main/plot/multi_class/epoch_10_optimizer_none.png)
+train_acc: 0.85, dev_acc: 0.83, cost:0.45
